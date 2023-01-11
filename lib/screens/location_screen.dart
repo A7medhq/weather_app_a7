@@ -1,12 +1,12 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:weather_app/screens/city_screen.dart';
 
+import '../services/weather.dart';
 import '../utilities/constants.dart';
 
 class LocationScreen extends StatefulWidget {
-  const LocationScreen({super.key});
+  final weatherData;
+  const LocationScreen({super.key, this.weatherData});
 
   @override
   LocationScreenState createState() => LocationScreenState();
@@ -71,7 +71,10 @@ class LocationScreenState extends State<LocationScreen> {
                       ),
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => CityScreen()));
+                      },
                       child: const Icon(
                         Icons.location_city,
                         size: 50.0,
@@ -86,16 +89,16 @@ class LocationScreenState extends State<LocationScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const Icon(
-                      FontAwesomeIcons.cloudSun,
-                      size: 120,
+                    Text(
+                      '${WeatherModel().getWeatherIcon((widget.weatherData.weather[0].id).toInt())}',
+                      style: TextStyle(fontSize: 74),
                     ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.baseline,
                       textBaseline: TextBaseline.alphabetic,
                       children: [
-                        const Text(
-                          '32',
+                        Text(
+                          widget.weatherData.main!.temp.round().toString(),
                           style: kTempTextStyle,
                         ),
                         Column(
@@ -137,10 +140,10 @@ class LocationScreenState extends State<LocationScreen> {
                   ],
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(right: 24.0),
+              Padding(
+                padding: EdgeInsets.only(right: 24.0, bottom: 24),
                 child: Text(
-                  "It's 🥶 in gaza! Dress 🧤🧣 ",
+                  "${WeatherModel().getMessage((widget.weatherData.main!.temp).toInt())} in ${widget.weatherData.name}!",
                   textAlign: TextAlign.right,
                   style: kMessageTextStyle,
                 ),
