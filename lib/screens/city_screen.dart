@@ -13,9 +13,16 @@ class CityScreen extends StatefulWidget {
 }
 
 class CityScreenState extends State<CityScreen> {
-  late WeatherData _weatherData;
+  WeatherData? _weatherData;
   String temp = '';
   TextEditingController textController = TextEditingController();
+  bool _validate = false;
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +30,7 @@ class CityScreenState extends State<CityScreen> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
+            opacity: 0.5,
             image: AssetImage('images/city_background.jpg'),
             fit: BoxFit.cover,
           ),
@@ -51,6 +59,7 @@ class CityScreenState extends State<CityScreen> {
                   style: TextStyle(color: Colors.white),
                   controller: textController,
                   decoration: InputDecoration(
+                      errorText: _validate ? 'Wrong Value' : null,
                       focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.white)),
                       enabledBorder: OutlineInputBorder(
@@ -61,17 +70,28 @@ class CityScreenState extends State<CityScreen> {
                 ),
                 TextButton(
                   onPressed: () async {
-                    _weatherData = await NetworkHelper()
-                        .getDataByCity(textController.text);
+                    if (await NetworkHelper()
+                            .getDataByCity(textController.text) !=
+                        null) {
+                      _weatherData = (await NetworkHelper()
+                          .getDataByCity(textController.text))!;
+                    } else {
+                      _weatherData = null;
+                    }
 
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => LocationScreen(
-                              weatherData: _weatherData,
-                            )));
-
-                    // setState(() {
-                    //   temp = _weatherData.main!.temp.toString();
-                    // });
+                    if (_weatherData != null) {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => LocationScreen(
+                                weatherData: _weatherData,
+                              )));
+                      setState(() {
+                        _validate = false;
+                      });
+                    } else {
+                      setState(() {
+                        _validate = true;
+                      });
+                    }
                   },
                   child: const Text(
                     'Get Weather',

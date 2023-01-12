@@ -5,8 +5,8 @@ import '../services/weather.dart';
 import '../utilities/constants.dart';
 
 class LocationScreen extends StatefulWidget {
-  final weatherData;
-  const LocationScreen({super.key, this.weatherData});
+  var weatherData;
+  LocationScreen({super.key, this.weatherData});
 
   @override
   LocationScreenState createState() => LocationScreenState();
@@ -71,9 +71,14 @@ class LocationScreenState extends State<LocationScreen> {
                       ),
                     ),
                     TextButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => CityScreen()));
+                      onPressed: () async {
+                        var result = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => CityScreen()));
+
+                        setState(() {
+                          widget.weatherData = result;
+                        });
                       },
                       child: const Icon(
                         Icons.location_city,

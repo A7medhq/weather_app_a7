@@ -19,7 +19,7 @@ class NetworkHelper {
     }
   }
 
-  Future<WeatherData> getDataByCity(String city) async {
+  Future<WeatherData?> getDataByCity(String city) async {
     var url = Uri.parse(
         'https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=a1461ae522a45d9d92f4b6549ac227cb&units=metric');
 
@@ -28,7 +28,7 @@ class NetworkHelper {
     if (response.statusCode == 200) {
       return WeatherData.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception('aaa');
+      return null;
     }
   }
 }
